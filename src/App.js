@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import moment from 'moment';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
-import Popup from 'react-popup';
+import Popup from 'reactjs-popup';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
+import 'reactjs-popup/dist/index.css';
 import './App.css';
 import PopupForm from './components/PopupForm';
-import 'react-big-calendar/lib/css/react-big-calendar.css';
-
 
 const localizer = momentLocalizer(moment);
 
@@ -16,33 +15,23 @@ function App() {
   const [popupMode, setPopupMode] = useState('create');
   const [currentEvent, setCurrentEvent] = useState(null);
   const [filter, setFilter] = useState('all');
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
 
   const openPopup = (date) => {
     setSelectedDate(date);
     setPopupMode('create');
     setCurrentEvent(null);
-    Popup.create({
-      title: 'Create Event',
-      content: <PopupForm mode="create" onSave={handleSaveEvent} />,
-      buttons: {}
-    });
+    setIsPopupOpen(true);
   };
 
   const handleSelectEvent = (event) => {
     setPopupMode('edit');
     setCurrentEvent(event);
-    Popup.create({
-      title: 'Edit/Delete Event',
-      content: (
-        <PopupForm
-          mode="edit"
-          event={event}
-          onEdit={handleEditEvent}
-          onDelete={handleDeleteEvent}
-        />
-      ),
-      buttons: {}
-    });
+    setIsPopupOpen(true);
+  };
+
+  const handleClosePopup = () => {
+    setIsPopupOpen(false);
   };
 
   const handleSaveEvent = (title, location) => {
@@ -53,7 +42,7 @@ function App() {
       end: moment(selectedDate).add(1, 'hours').toDate(),
     };
     setEvents([...events, newEvent]);
-    Popup.close();
+    handleClosePopup();
   };
 
   const handleEditEvent = (updatedTitle, updatedLocation) => {
@@ -61,12 +50,12 @@ function App() {
       ev === currentEvent ? { ...ev, title: updatedTitle, location: updatedLocation } : ev
     );
     setEvents(updatedEvents);
-    Popup.close();
+    handleClosePopup();
   };
 
   const handleDeleteEvent = () => {
     setEvents(events.filter((ev) => ev !== currentEvent));
-    Popup.close();
+    handleClosePopup();
   };
 
   const filteredEvents = events.filter((ev) => {
@@ -99,7 +88,21 @@ function App() {
           };
         }}
       />
-      <Popup />
+
+      <Popup open={isPopupOpen} onClose={handleClosePopup} modal nested>
+        {(close) => (
+          <div>
+            <h3>{popupMode === 'create' ? 'Create Event' : 'Edit/Delete Event'}</h3>
+            <PopupForm
+              mode={popupMode}
+              event={currentEvent}
+              onSave={handleSaveEvent}
+              onEdit={handleEditEvent}
+              onDelete={handleDeleteEvent}
+            />
+          </div>
+        )}
+      </Popup>
     </div>
   );
 }
