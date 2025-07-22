@@ -34,8 +34,10 @@ const PopupForm = ({ onAddEvent }) => {
       <label>End</label>
       <input data-cy="end-input" type="datetime-local" value={end} onChange={(e) => setEnd(e.target.value)} />
 
-      {/* ✅ Add this button for Cypress to find */}
-      <button type="submit" className="btn" data-cy="submit-btn">Add Event</button>
+     <button type="submit" className="btn" data-cy="submit-btn">
+  Add Event
+</button>
+
     </form>
   );
 };
