@@ -1,34 +1,43 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import moment from "moment";
 
-function PopupForm({ mode, event, onSave, onEdit, onDelete }) {
-  const [title, setTitle] = useState(event?.title || '');
-  const [location, setLocation] = useState(event?.location || '');
+const PopupForm = ({ onAddEvent }) => {
+  const [title, setTitle] = useState("");
+  const [start, setStart] = useState("");
+  const [end, setEnd] = useState("");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!title || !start || !end) return;
+
+    const newEvent = {
+      title,
+      start: new Date(start),
+      end: new Date(end),
+    };
+
+    onAddEvent(newEvent);
+
+    setTitle("");
+    setStart("");
+    setEnd("");
+  };
 
   return (
-    <div>
-      <input
-        placeholder="Event Title"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-      />
-      <input
-        placeholder="Event Location"
-        value={location}
-        onChange={(e) => setLocation(e.target.value)}
-      />
-      {mode === 'create' && (
-        <div className="mm-popup__box__footer__right-space">
-          <button className="mm-popup__btn" onClick={() => onSave(title, location)}>Save</button>
-        </div>
-      )}
-      {mode === 'edit' && (
-        <>
-          <button className="mm-popup__btn--info" onClick={() => onEdit(title, location)}>Edit</button>
-          <button className="mm-popup__btn--danger" onClick={onDelete}>Delete</button>
-        </>
-      )}
-    </div>
+    <form onSubmit={handleSubmit}>
+      <label>Title</label>
+      <input data-cy="title-input" value={title} onChange={(e) => setTitle(e.target.value)} />
+
+      <label>Start</label>
+      <input data-cy="start-input" type="datetime-local" value={start} onChange={(e) => setStart(e.target.value)} />
+
+      <label>End</label>
+      <input data-cy="end-input" type="datetime-local" value={end} onChange={(e) => setEnd(e.target.value)} />
+
+      {/* ✅ Add this button for Cypress to find */}
+      <button type="submit" className="btn" data-cy="submit-btn">Add Event</button>
+    </form>
   );
-}
+};
 
 export default PopupForm;
