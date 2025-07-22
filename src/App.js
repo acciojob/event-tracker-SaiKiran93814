@@ -22,11 +22,13 @@ const App = () => {
 
       {/* ✅ Button with data-cy attribute */}
       <button
-        data-cy="open-popup-btn"
-        onClick={() => setPopupOpen(true)}
-      >
-        Create Event
-      </button>
+  className="btn"
+  data-cy="open-popup-btn"
+  onClick={() => setPopupOpen(true)}
+>
+  Create Event
+</button>
+
 
       {/* Popup to add new events */}
       <Popup open={popupOpen} onClose={() => setPopupOpen(false)} modal nested>
